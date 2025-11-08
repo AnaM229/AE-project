@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 4000;
 
 (async () => {
     await connectDB();
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
 
     // test admin user creation
     const adminEmail = "admin@test.com";

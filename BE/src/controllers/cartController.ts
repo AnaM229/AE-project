@@ -48,7 +48,16 @@ export async function updateCartItem(req: AuthRequest, res: Response) {
 
     item.quantity = quantity;
     await item.save();
-    res.json(item);
+
+    const updated = await CartItem.findByPk(id, {
+      include: [
+        {
+          model: Product,
+          attributes: ["id", "title", "price", "currency"],
+        },
+      ],
+    });
+    res.json(updated);
 }
 
 // DELETE /cart/:id – delete
@@ -60,4 +69,19 @@ export async function removeCartItem(req: AuthRequest, res: Response) {
 
     await item.destroy();
     res.status(204).send();
+}
+
+
+// DELETE /cart – clear entire cart for current user
+export async function clearCart(req: AuthRequest, res: Response) {
+  try {
+    await CartItem.destroy({
+      where: { UserId: req.user!.id },
+    });
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("Error clearing cart:", err);
+    res.status(500).json({ message: "Failed to clear cart" });
+  }
 }

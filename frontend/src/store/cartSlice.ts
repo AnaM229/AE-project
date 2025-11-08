@@ -8,6 +8,12 @@ export interface CartItem {
   price?: number;
   quantity: number;
   currency?: string;
+  Product?: {
+    id: number;
+    title: string;
+    price: number;
+    currency: string;
+  };
 }
 
 interface CartState {
@@ -21,12 +27,13 @@ const initialState: CartState = {
   status: "idle",
 };
 
+//  GET all items 
 export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
   const res = await api.get("/cart");
   return res.data;
 });
 
-// create 
+//  POST add item 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async (payload: { productId: number; quantity: number }) => {
@@ -35,7 +42,7 @@ export const addToCart = createAsyncThunk(
   }
 );
 
-// update
+//  PUT update item 
 export const updateCartItem = createAsyncThunk(
   "cart/updateCartItem",
   async (payload: { id: number; quantity: number }) => {
@@ -44,7 +51,7 @@ export const updateCartItem = createAsyncThunk(
   }
 );
 
-// delete
+//  DELETE single item 
 export const removeCartItem = createAsyncThunk(
   "cart/removeCartItem",
   async (id: number) => {
@@ -53,17 +60,20 @@ export const removeCartItem = createAsyncThunk(
   }
 );
 
+//  DELETE all items (backend clear) 
+export const clearCartBackend = createAsyncThunk("cart/clearCartBackend", async () => {
+  await api.delete("/cart"); // DELETE /cart – backend route
+  return [];
+});
 
+//  Slice 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
-  reducers: {
-    clearCart(state) {
-      state.items = [];
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
+      //  fetchCart 
       .addCase(fetchCart.pending, (state) => {
         state.status = "loading";
       })
@@ -75,6 +85,8 @@ const cartSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
+
+      //  addToCart 
       .addCase(addToCart.fulfilled, (state, action: PayloadAction<CartItem>) => {
         const existing = state.items.find(
           (i) => i.ProductId === action.payload.ProductId
@@ -85,15 +97,29 @@ const cartSlice = createSlice({
           state.items.push(action.payload);
         }
       })
+
+      // === updateCartItem ===
       .addCase(updateCartItem.fulfilled, (state, action: PayloadAction<CartItem>) => {
         const idx = state.items.findIndex((i) => i.id === action.payload.id);
-        if (idx !== -1) state.items[idx] = action.payload;
+        if (idx !== -1) {
+          state.items[idx] = {
+            ...state.items[idx],
+            ...action.payload,
+            Product: state.items[idx].Product,
+          };
+        }
       })
+
+      // removeCartItem
       .addCase(removeCartItem.fulfilled, (state, action: PayloadAction<number>) => {
         state.items = state.items.filter((i) => i.id !== action.payload);
+      })
+
+      // clearCartBackend
+      .addCase(clearCartBackend.fulfilled, (state) => {
+        state.items = [];
       });
   },
 });
 
-export const { clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
