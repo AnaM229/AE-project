@@ -33,6 +33,7 @@ const ProductList: React.FC = () => {
 
   const handleAddToCart = (id: number) => {
     dispatch(addToCart({ productId: id, quantity: 1 }));
+    alert("Product added to cart!");
   };
 
   return (

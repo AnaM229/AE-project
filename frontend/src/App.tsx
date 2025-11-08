@@ -6,32 +6,30 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Cart from "./components/Cart";
+import Register from "./pages/Register";
+import AdminPanel from "./pages/AdminPanel";
 import { Container } from "@mui/material";
 
-// === Helper pentru rute protejate ===
 const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
   const token = useSelector((state: RootState) => state.user.token);
   return token ? children : <Navigate to="/login" replace />;
 };
 
-// === Pagina fallback pentru rute inexistente ===
 const NotFound = () => (
   <Container sx={{ mt: 8, textAlign: "center" }}>
     <h2>404 - Page not found</h2>
   </Container>
 );
 
-// === Componenta principală ===
 const AppContent = () => {
   return (
     <>
       <Navbar />
       <Container sx={{ mt: 4 }}>
         <Routes>
-          {/* Rute publice */}
+
           <Route path="/login" element={<Login />} />
 
-          {/* Rute protejate */}
           <Route
             path="/"
             element={
@@ -49,7 +47,18 @@ const AppContent = () => {
             }
           />
 
-          {/* Rute fallback */}
+          <Route path="/register" element={<Register />} />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminPanel />
+              </ProtectedRoute>
+            }
+          />
+
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>

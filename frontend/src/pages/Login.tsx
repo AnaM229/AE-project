@@ -33,39 +33,47 @@ const Login: React.FC = () => {
 
   return (
     <Container maxWidth="xs" sx={{ mt: 8 }}>
-      <Box
-        component="form"
-        onSubmit={handleLogin}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 2,
-          p: 3,
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      >
-        <Typography variant="h5">Login</Typography>
-        <TextField
-          fullWidth
-          label="Email"
-          variant="outlined"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          fullWidth
-          label="Password"
-          type="password"
-          variant="outlined"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button type="submit" variant="contained" fullWidth>
-          Login
-        </Button>
-      </Box>
+        <Box
+            component="form"
+            onSubmit={handleLogin}
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
+                p: 3,
+                borderRadius: 2,
+                boxShadow: 3,
+            }}
+        >
+            <Typography variant="h5">Login</Typography>
+            <TextField
+                fullWidth
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                variant="outlined"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button type="submit" variant="contained" fullWidth>
+                Login
+            </Button>
+            <Button
+                variant="text"
+                fullWidth
+                onClick={() => navigate("/register")}
+                sx={{ mt: 1 }}
+            >
+                Don't have an account? Register
+            </Button>
+        </Box>
     </Container>
   );
 };
