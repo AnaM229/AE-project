@@ -66,7 +66,7 @@ const AppContent = () => {
   );
 };
 
-// === Wrapping cu Provider și BrowserRouter ===
+
 const App = () => {
   return (
     <Provider store={store}>
